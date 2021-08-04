@@ -176,7 +176,9 @@ class SchemaConversionScreen extends HTMLElement {
     <hb-modal modalId="editTableWarningModal" content="edit table" contentIcon="cancel" 
       connectIconClass="connect-icon-failure" modalBodyClass="connection-modal-body" title="Error Message"></hb-modal>
     <hb-modal modalId="createIndexModal" content="" contentIcon="" 
-      connectIconClass="" modalBodyClass="" title="Select keys for new index"></hb-modal>`;
+      connectIconClass="" modalBodyClass="" title="Select keys for new index"></hb-modal>
+      <hb-modal modalId="editPkModal" content="" contentIcon="" 
+      connectIconClass="" modalBodyClass="" title="Edit Primary Key"></hb-modal>`;
 
     initSchemaScreenTasks();
     if (currentTab === "reportTab" && !this.testing) {

@@ -2,6 +2,7 @@ import "../../components/ConnectToDbForm/ConnectToDbForm.component.js";
 import "../../components/LoadDbDumpForm/LoadDbDumpForm.component.js";
 import "../../components/LoadSessionFileForm/LoadSessionFileForm.component.js";
 import "../../components/AddIndexForm/AddIndexForm.component.js";
+import "../../components/EditPrimaryKeyForm/EditPrimaryKeyForm.component.js"
 import {MODALCONFIGS} from "./../../config/constantData.js";
 
 class Modal extends HTMLElement {
@@ -68,6 +69,9 @@ class Modal extends HTMLElement {
         break;
       case "createIndexModal":
         modalButtons = MODALCONFIGS.ADD_INDEX_MODAL;
+        break;
+      case "editPkModal":
+        modalButtons = MODALCONFIGS.EDIT_PK_MODAL;
         break;
       case "editTableWarningModal":
         modalButtons = MODALCONFIGS.EDIT_TABLE_WARNING_MODAL;

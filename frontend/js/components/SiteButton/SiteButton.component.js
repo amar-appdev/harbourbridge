@@ -42,6 +42,10 @@ class SiteButton extends HTMLElement {
         case "createNewSecIndex":
           Actions[this.buttonAction](this.buttonId);
           break;
+        
+        case "editPrimaryKey":
+          Actions[this.buttonAction](this.buttonId);
+          break;
 
         case "add":
           Actions[this.buttonAction](5,6)

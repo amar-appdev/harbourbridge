@@ -15,6 +15,7 @@
 package web
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -48,6 +49,10 @@ func getRoutes() *mux.Router {
 	router.HandleFunc("/rename/fks", renameForeignKeys).Methods("POST")
 	router.HandleFunc("/rename/indexes", renameIndexes).Methods("POST")
 	router.HandleFunc("/add/indexes", addIndexes).Methods("POST")
+
+	// edit primary key
+	fmt.Println("fdfdsfds")
+	router.HandleFunc("/edit/pks", editPks).Methods("POST")
 
 	router.PathPrefix("/").Handler(http.FileServer(staticFileDirectory))
 	return router

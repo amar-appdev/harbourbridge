@@ -699,6 +699,30 @@ func addIndexes(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(sessionState.conv)
 }
 
+func editPks(w http.ResponseWriter, r *http.Request) {
+	table := r.FormValue("table")
+	fmt.Println(table)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Body Read Error : %v", err), http.StatusInternalServerError)
+	}
+
+	newPks := []ddl.IndexKey{}
+	if err = json.Unmarshal(reqBody, &newPks); err != nil {
+		http.Error(w, fmt.Sprintf("Request Body parse error : %v", err), http.StatusBadRequest)
+		return
+	}
+	fmt.Println(newPks)
+	sp := sessionState.conv.SpSchema[table]
+	fmt.Println(sp)
+	sp.Pks = newPks
+
+	sessionState.conv.SpSchema[table] = sp
+	updateSessionFile()
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(sessionState.conv)
+}
+
 func checkSpannerNamesValidity(input []string) (bool, []string) {
 	status := true
 	var invalidNewNames []string

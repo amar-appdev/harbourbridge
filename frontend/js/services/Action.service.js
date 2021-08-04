@@ -388,7 +388,21 @@ const Actions = (() => {
                 showSnackbar(res, " redBg");
             }
         },
-
+        updatePrimayKeys:async (tableIndex, tableName)=>{
+            console.log(tableIndex, tableName,keysList);
+            let res = await Fetch.getAppData("POST", "/edit/pks?table=" + tableName, keysList);
+            if (res.ok) {
+                jQuery("#editPkModal").modal("hide");
+                res = await res.json();
+                Store.updatePrimaryKeys(res);
+                Store.updateTableData("reportTabContent", res);
+                Actions.resetReportTableData();
+            } else {
+                res = await res.text();
+                Actions.hideSpinner()
+                showSnackbar(res, " redBg");
+            }
+        },
         createNewSecIndex: (id) => {
             let iIndex = id.indexOf("indexButton");
             let tableIndex = id.substring(3, iIndex)
@@ -429,6 +443,21 @@ const Actions = (() => {
       tableIndex=${tableIndex} coldata=${JSON.stringify(SpSchema[tableName].ColNames)}  ></hb-add-index-form>`;
             generalModal.setAttribute("content", content);
             jQuery("#createIndexModal").modal();
+            resetIndexModal();
+        },
+
+        editPrimaryKey:(id)=>{
+            console.log(id)
+            let iIndex = id.indexOf("pkButton");
+            let tableIndex = id.substring(3, iIndex)
+            let tableName = id.substring(iIndex + 9)
+            let generalModal = document.querySelector("hb-modal[modalId = editPkModal]")
+            console.log(generalModal)
+            const { SpSchema } = Store.getinstance().tableData.reportTabContent;
+            let content = `<hb-edit-pk-form tableName=${tableName} 
+      tableIndex=${tableIndex} coldata=${JSON.stringify(SpSchema[tableName].ColNames)}  ></hb-edit-pk-form>`;
+            generalModal.setAttribute("content", content);
+            jQuery("#editPkModal").modal();
             resetIndexModal();
         },
 

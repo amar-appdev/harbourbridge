@@ -43,6 +43,7 @@ export const MODALCONFIGS = {
     EDIT_GLOBAL_DATATYPE_MODAL: [{ value: "Next", id: "data-type-button", disabledProp: "" }],
     EDIT_TABLE_WARNING_MODAL: [{ value: "Ok", id: "edit-table-warning", disabledProp: "" }],
     ADD_INDEX_MODAL: [{ value: "CREATE", id: "create-index-button", disabledProp: "disabled", modalDismiss: true }],
+    EDIT_PK_MODAL: [{ value: "EDIT", id: "edit-pk-button", disabledProp: "disabled", modalDismiss: true }],
     FK_DROP_WARNING_MODAL: [{ value: "Yes", id: "fk-drop-confirm", disabledProp: "" }, { value: "No", id: "fk-drop-cancel", disabledProp: "" }],
 }
 

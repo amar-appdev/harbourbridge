@@ -112,6 +112,8 @@ class DataTable extends HTMLElement {
                         <div class="mdc-card fk-content">
                             <hb-site-button buttonid="hb-${tableIndex}indexButton-${this.tableName}" classname="new-index-button"
                                 buttonaction="createNewSecIndex" text="Add Index"></hb-site-button>
+                                <hb-site-button buttonid="hb-${tableIndex}pkButton-${this.tableName}" classname="new-index-button"
+                                buttonaction="editPrimaryKey" text="Edit Primary Key"></hb-site-button>
                             <table class="index-acc-table fk-table">
                                 ${ secIndexArray && secIndexArray.length > 0 ? `<thead>
                                     <tr>
