@@ -416,8 +416,22 @@ func getIndexes(conv *internal.Conv, db *sql.DB, table schemaAndName) ([]schema.
 	}
 	return indexes, nil
 }
+
+// check dataType is spatial datatype or not.
+func checkIsSpatial(dataType string) bool {
+	for _, t := range MysqlSpatialDataTypes {
+		if t == dataType {
+			return true
+		}
+	}
+	return false
+}
+
 func toType(dataType string, columnType string, charLen sql.NullInt64, numericPrecision, numericScale sql.NullInt64) schema.Type {
 	switch {
+	// convert spatial data type into the text
+	case checkIsSpatial(dataType):
+		return schema.Type{Name: "text"}
 	case dataType == "set":
 		return schema.Type{Name: dataType, ArrayBounds: []int64{-1}}
 	case charLen.Valid:
