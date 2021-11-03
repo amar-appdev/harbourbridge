@@ -183,6 +183,10 @@ class DataTable extends HTMLElement {
         let columnPerPage = 15;
         let maxPossiblePageNumber =  Math.ceil(tableColumnsArrayLength / columnPerPage);
         let tableColumnsArrayCurrent = [];
+        let srcPks = [];
+        for (var x = 0; x < srcTable.PrimaryKeys.length; x++) {
+            srcPks.push(srcTable.PrimaryKeys[x].Column);
+        }
         let z = 0;
         for(let i= pageNumber*columnPerPage ;i < Math.min(tableColumnsArrayLength, pageNumber*columnPerPage+15) ; i++ )
         {
@@ -253,7 +257,7 @@ class DataTable extends HTMLElement {
                                     </div>
                                 </span>`: `<div></div>`}
                                 <span class="column left">
-                                    ${(currentColumnSrc != srcTable.PrimaryKeys[0].Column || srcTable.PrimaryKeys === null) ?
+                                    ${srcTable.PrimaryKeys === null || srcPks.indexOf(currentColumnSrc) < 0?
                         `<img class="hidden ml-3" src="./Icons/Icons/ic_vpn_key_24px.svg" />` :
                         `<img class="ml-3" src="./Icons/Icons/ic_vpn_key_24px.svg" />`}
                                 </span>
