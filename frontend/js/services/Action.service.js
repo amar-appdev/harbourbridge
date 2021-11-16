@@ -936,6 +936,9 @@ const Actions = (() => {
 
         updateTable: (tableIndex, colName, attr, value) => {
             Store.updateTables(tableIndex, colName, attr, value);
+        },
+        getTables: (tableIndex) => {
+            return Store.getTables()[tableIndex];
         }
     };
 })();

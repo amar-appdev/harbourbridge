@@ -253,19 +253,32 @@ const Store = (function () {
     },
 
     updateTables: (tableIndex, colName, attr, value) => {
-      if (attr == 'T') {
-        tables[tableIndex].sp.ColDefs[colName][attr].Name = value;
-        console.log(tables);
-        return;
+      console.log(tables[tableIndex]);
+      switch (attr) {
+        case 'T':
+          tables[tableIndex].sp.ColDefs[colName][attr].Name = value;
+          console.log(tables);
+          break;
+
+        case 'Name':
+          console.log(colName);
+          console.log(tables[tableIndex].sp.ColDefs[colName]);
+          // tables[tableIndex].sp.ColDefs[value] = JSON.parse(JSON.stringify(tables[tableIndex].sp.ColDefs[colName]));
+          tables[tableIndex].sp.ColDefs[colName]['Name'] = value;
+          // var index = tables[tableIndex].sp.ColNames.indexOf(colName)
+          // tables[tableIndex].sp.ColNames[index] = value
+          // delete tables[tableIndex].sp.ColDefs[colName];
+          console.log(tables[tableIndex]);
+          break;
+
+        case 'NotNull':
+          tables[tableIndex].sp.ColDefs[colName][attr] = value;
+          break;
+
+        default:
+          console.log(tables);
       }
-      else if (attr == 'Name') {
-        tables[tableIndex].sp.ColDefs[colName][attr] = value;
-        // var index = tables[tableIndex].sp.ColNames.indexOf(colName)
-        // tables[tableIndex].sp.ColNames[index] = value
-        return;
-      }
-      tables[tableIndex].sp.ColDefs[colName][attr] = value;
-      console.log(tables);
+
     },
 
     updateIndex: (tableIndex, indexArray) => {

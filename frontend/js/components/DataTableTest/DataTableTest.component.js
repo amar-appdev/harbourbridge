@@ -237,6 +237,7 @@ class DataTableTest extends HTMLElement {
                 }
 
                 let currentColumnSrc = srcTable.ColNames[index];
+                console.log(tableColumn);
                 let defaultdatatype = spTable.ColDefs[tableColumn].T.Name;
                 return `
                             <tr class="report-table-content">
@@ -259,7 +260,7 @@ class DataTableTest extends HTMLElement {
                                 </span>
                                 <span class="column right src-column"
                                     id="src-column-name-${tableIndex}${index}${index}">${currentColumnSrc}</span>
-                            </td>
+                            </td> 
                             <td class="sp-column acc-table-td spanner-tab-cell-${tableIndex}${index}">
                                 ${tableMode ? `<div class="edit-column-name " id="edit-column-name-${tableIndex}${index}">
                                     <span class="column left key-margin">
@@ -436,9 +437,10 @@ class DataTableTest extends HTMLElement {
                     jQuery('#index-and-key-delete-warning').find('#modal-content').html(`This will permanently delete the secondary index
                     and the corresponding uniqueness constraints on indexed columns (if applicable). Do you want to continue?`);
                     recreateNode(document.getElementById('fk-drop-confirm'))
-                    document.getElementById('fk-drop-confirm').addEventListener('click', () => {
-                        if (Actions.dropSecondaryIndexHandler(tableName, tableIndex, index)) {
-                            this.data.sp.Indexes.splice(index, 1);
+                    document.getElementById('fk-drop-confirm').addEventListener('click', async () => {
+                        if (await Actions.dropSecondaryIndexHandler(tableName, tableIndex, index)) {
+                            this.data = JSON.parse(JSON.stringify(Actions.getTables(tableIndex)));
+                            console.log(this.data);
                             this.render();
                             console.log('re rendered !!..!>>!>>');
                         }
@@ -474,7 +476,7 @@ class DataTableTest extends HTMLElement {
 
         for (let i = 0; i < spTable.ColNames.length; i++) {
             document.getElementById(`column-name-text-${tableIndex}${i}${i}`)?.addEventListener('focusout', (e) => {
-                Actions.updateTable(tableIndex, spTable.ColNames[i], 'Name', e.target.value);
+                if (e.target.value !== spTable.ColNames[i]) Actions.updateTable(tableIndex, spTable.ColNames[i], 'Name', e.target.value);
             })
         }
 
