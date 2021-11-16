@@ -692,7 +692,7 @@ func addIndexes(w http.ResponseWriter, r *http.Request) {
 
 	sp := sessionState.conv.SpSchema[table]
 	sp.Indexes = append(sp.Indexes, newIndexes...)
-
+	print("added new sec index")
 	sessionState.conv.SpSchema[table] = sp
 	updateSessionFile()
 	w.WriteHeader(http.StatusOK)

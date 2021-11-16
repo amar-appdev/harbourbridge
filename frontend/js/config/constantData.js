@@ -5,25 +5,31 @@ export const NAVLINKS = {
     },
 
     links: [{
-            text: "Home",
-            href: "#/",
-            aTagId: "homeScreen",
-            name: "headerMenu",
-        },
+        text: "Home",
+        href: "#/",
+        aTagId: "homeScreen",
+        name: "headerMenu",
+    },
 
-        {
-            text: "Schema Conversion",
-            href: "javascript:;",
-            aTagId: "schemaScreen",
-            name: "headerMenu",
-        },
+    {
+        text: "Schema Conversion",
+        href: "javascript:;",
+        aTagId: "schemaScreen",
+        name: "headerMenu",
+    },
+    {
+        text: "Schema Test",
+        href: "#/schematest",
+        aTagId: "schemaTest",
+        name: "headerMenu",
+    },
 
-        {
-            text: "Instructions",
-            href: "#/instructions",
-            aTagId: "instructions",
-            name: "headerMenu",
-        },
+    {
+        text: "Instructions",
+        href: "#/instructions",
+        aTagId: "instructions",
+        name: "headerMenu",
+    },
     ],
 };
 
@@ -47,28 +53,28 @@ export const MODALCONFIGS = {
 }
 
 export const MAIN_PAGE_ICONS = [{
-        image: "Icons/Icons/Group 2048.svg",
-        imageAltText: "connect to db",
-        label: "Connect to Database",
-        action: "openConnectionModal",
-        modalDataTarget: "#connectToDbModal",
-    },
+    image: "Icons/Icons/Group 2048.svg",
+    imageAltText: "connect to db",
+    label: "Connect to Database",
+    action: "openConnectionModal",
+    modalDataTarget: "#connectToDbModal",
+},
 
-    {
-        image: "Icons/Icons/Group 2049.svg",
-        imageAltText: "load database image",
-        label: "Load Database Dump",
-        action: "openDumpLoadingModal",
-        modalDataTarget: "#loadDatabaseDumpModal",
-    },
+{
+    image: "Icons/Icons/Group 2049.svg",
+    imageAltText: "load database image",
+    label: "Load Database Dump",
+    action: "openDumpLoadingModal",
+    modalDataTarget: "#loadDatabaseDumpModal",
+},
 
-    {
-        image: "Icons/Icons/importIcon2.jpg",
-        imageAltText: "Import schema image",
-        label: "Load Session File",
-        action: "openSessionFileLoadModal",
-        modalDataTarget: "#loadSchemaModal",
-    },
+{
+    image: "Icons/Icons/importIcon2.jpg",
+    imageAltText: "Import schema image",
+    label: "Load Session File",
+    action: "openSessionFileLoadModal",
+    modalDataTarget: "#loadSchemaModal",
+},
 ];
 
 export const MAIN_PAGE_STATIC_CONTENT = {
@@ -79,19 +85,19 @@ export const MAIN_PAGE_STATIC_CONTENT = {
 }
 
 export const TAB_CONFIG_DATA = [{
-        id: "report",
-        text: "Schema",
-    },
+    id: "report",
+    text: "Schema",
+},
 
-    {
-        id: "ddl",
-        text: "DDL",
-    },
+{
+    id: "ddl",
+    text: "DDL",
+},
 
-    {
-        id: "summary",
-        text: "Warnings",
-    },
+{
+    id: "summary",
+    text: "Warnings",
+},
 ];
 
 export const HISTORY_TABLE_HEADING = "Conversion history";

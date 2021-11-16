@@ -51,7 +51,7 @@ const Actions = (() => {
             tableData.data = {};
         },
 
-        onLoadDatabase: async(dbType, dumpFilePath) => {
+        onLoadDatabase: async (dbType, dumpFilePath) => {
             let reportData, sourceTableFlag, reportDataResp, reportDataCopy, jsonReportDataResp, requestCode;
             reportData = await Fetch.getAppData("POST", "/convert/dump", { Driver: dbType, Path: dumpFilePath });
             reportDataCopy = reportData.clone();
@@ -78,7 +78,7 @@ const Actions = (() => {
             return true;
         },
 
-        onconnect: async(dbType, dbHost, dbPort, dbUser, dbName, dbPassword) => {
+        onconnect: async (dbType, dbHost, dbPort, dbUser, dbName, dbPassword) => {
             let sourceTableFlag = "",
                 response;
             let payload = { Driver: dbType, Database: dbName, Password: dbPassword, User: dbUser, Port: dbPort, Host: dbHost };
@@ -96,7 +96,7 @@ const Actions = (() => {
             return response;
         },
 
-        showSchemaAssessment: async() => {
+        showSchemaAssessment: async () => {
             let reportDataResp, reportData, sourceTableFlag;
             reportData = await Fetch.getAppData("GET", "/convert/infoschema");
             reportDataResp = await reportData.json();
@@ -106,7 +106,7 @@ const Actions = (() => {
             jQuery("#connectModalSuccess").modal("hide");
         },
 
-        onLoadSessionFile: async(filePath) => {
+        onLoadSessionFile: async (filePath) => {
             let driver = '',
                 response, payload;
             let srcDb = Store.getSourceDbName()
@@ -139,7 +139,7 @@ const Actions = (() => {
             }
         },
 
-        ddlSummaryAndConversionApiCall: async() => {
+        ddlSummaryAndConversionApiCall: async () => {
             let conversionRate, conversionRateJson, ddlData, ddlDataJson, summaryData, summaryDataJson;
             ddlData = await Fetch.getAppData("GET", "/ddl");
             summaryData = await Fetch.getAppData("GET", "/summary");
@@ -157,7 +157,7 @@ const Actions = (() => {
             return true;
         },
 
-        sessionRetrieval: async(dbType) => {
+        sessionRetrieval: async (dbType) => {
             let sessionStorageArr, sessionInfo, sessionResp;
             sessionResp = await Fetch.getAppData("GET", "/session");
             sessionInfo = await sessionResp.json();
@@ -169,7 +169,7 @@ const Actions = (() => {
             sessionStorage.setItem('currentSessionIdx', 0)
         },
 
-        resumeSessionHandler: async(index, sessionArray) => {
+        resumeSessionHandler: async (index, sessionArray) => {
             Actions.showSpinner()
             let driver, path, dbName, sourceDb, pathArray, fileName, filePath;
             Store.setSourceDbName(sessionArray[index].sourceDbType)
@@ -180,7 +180,7 @@ const Actions = (() => {
             pathArray = path.split("/");
             fileName = pathArray[pathArray.length - 1];
             filePath = "./" + fileName;
-            readTextFile(filePath, async(error, text) => {
+            readTextFile(filePath, async (error, text) => {
                 if (error) {
                     let storage = JSON.parse(sessionStorage.getItem('sessionStorage'))
                     storage.splice(index, 1);
@@ -217,31 +217,31 @@ const Actions = (() => {
             }
         },
 
-        downloadSession: async() => {
+        downloadSession: async () => {
             let reportJsonObj = JSON.stringify(Store.getinstance().tableData.reportTabContent);
             reportJsonObj = reportJsonObj.replaceAll("9223372036854776000", "9223372036854775807");
             jQuery("<a />", {
-                    download: "session.json",
-                    href: "data:application/json;charset=utf-8," + encodeURIComponent(reportJsonObj, null, 4),
-                }).appendTo("body").click(function() { jQuery(this).remove(); })[0]
+                download: "session.json",
+                href: "data:application/json;charset=utf-8," + encodeURIComponent(reportJsonObj, null, 4),
+            }).appendTo("body").click(function () { jQuery(this).remove(); })[0]
                 .click();
         },
 
-        downloadDdl: async() => {
+        downloadDdl: async () => {
             let ddlreport = await Fetch.getAppData("GET", "/schema");
             if (ddlreport.ok) {
-                await ddlreport.text().then(function(result) {
+                await ddlreport.text().then(function (result) {
                     localStorage.setItem("schemaFilePath", result);
                 });
                 let schemaFilePath = localStorage.getItem("schemaFilePath");
                 if (schemaFilePath) {
                     let schemaFileName = schemaFilePath.split("/")[schemaFilePath.split("/").length - 1];
                     let filePath = "./" + schemaFileName;
-                    readTextFile(filePath, function(error, text) {
+                    readTextFile(filePath, function (error, text) {
                         jQuery("<a />", {
-                                download: schemaFileName,
-                                href: "data:application/json;charset=utf-8," + encodeURIComponent(text),
-                            }).appendTo("body").click(function() { jQuery(this).remove(); })[0]
+                            download: schemaFileName,
+                            href: "data:application/json;charset=utf-8," + encodeURIComponent(text),
+                        }).appendTo("body").click(function () { jQuery(this).remove(); })[0]
                             .click();
                     });
                 }
@@ -249,20 +249,20 @@ const Actions = (() => {
             }
         },
 
-        downloadReport: async() => {
+        downloadReport: async () => {
             let summaryreport = await Fetch.getAppData("GET", "/report");
             if (summaryreport.ok) {
-                await summaryreport.text().then(function(result) {
+                await summaryreport.text().then(function (result) {
                     localStorage.setItem("reportFilePath", result);
                 });
                 let reportFilePath = localStorage.getItem("reportFilePath");
                 let reportFileName = reportFilePath.split("/")[reportFilePath.split("/").length - 1];
                 let filePath = "./" + reportFileName;
-                readTextFile(filePath, function(error, text) {
+                readTextFile(filePath, function (error, text) {
                     jQuery("<a />", {
-                            download: reportFileName,
-                            href: "data:application/json;charset=utf-8," + encodeURIComponent(text),
-                        }).appendTo("body").click(function() { jQuery(this).remove(); })[0]
+                        download: reportFileName,
+                        href: "data:application/json;charset=utf-8," + encodeURIComponent(text),
+                    }).appendTo("body").click(function () { jQuery(this).remove(); })[0]
                         .click();
                 });
             }
@@ -272,7 +272,7 @@ const Actions = (() => {
             jQuery("#globalDataTypeModal").modal();
         },
 
-        checkInterleaveConversion: async(tableName) => {
+        checkInterleaveConversion: async (tableName) => {
             let interleaveApiCall;
             interleaveApiCall = await Fetch.getAppData("GET", "/setparent?table=" + tableName);
             let interleaveApiCallResp = await interleaveApiCall.json();
@@ -280,7 +280,7 @@ const Actions = (() => {
             Store.setInterleave(tableName, value);
         },
 
-        setGlobalDataType: async() => {
+        setGlobalDataType: async () => {
             Actions.showSpinner()
             let globalDataTypeList = Store.getGlobalDataTypeList();
             let dataTypeListLength = Object.keys(globalDataTypeList).length;
@@ -313,7 +313,7 @@ const Actions = (() => {
             }
         },
 
-        setGlobalDataTypeList: async() => {
+        setGlobalDataTypeList: async () => {
             let res = await Fetch.getAppData("GET", "/typemap");
             if (res) {
                 let result = await res.json();
@@ -340,7 +340,7 @@ const Actions = (() => {
             }
         },
 
-        fetchIndexFormValues: async(tableIndex, tableName, name, uniqueness) => {
+        fetchIndexFormValues: async (tableIndex, tableName, name, uniqueness) => {
             Actions.showSpinner()
             if (keysList.length === 0) {
                 Actions.hideSpinner()
@@ -379,13 +379,18 @@ const Actions = (() => {
             if (res.ok) {
                 jQuery("#createIndexModal").modal("hide");
                 res = await res.json();
-                Store.updatePrimaryKeys(res);
-                Store.updateTableData("reportTabContent", res);
+                // Store.updatePrimaryKeys(res);
+                // Store.updateTableData("reportTabContent", res);
                 Actions.resetReportTableData();
+                console.log(res);
+                Store.updateIndex(tableIndex, res.SpSchema[tableName].Indexes);
+                Actions.hideSpinner()
+                return res.SpSchema[tableName].Indexes;
             } else {
                 res = await res.text();
                 Actions.hideSpinner()
                 showSnackbar(res, " redBg");
+                return res;
             }
         },
 
@@ -397,7 +402,7 @@ const Actions = (() => {
             if (document.getElementById("editSpanner" + tableIndex).innerHTML.trim() == "Save Changes") {
                 let pendingChanges = false;
                 let dataTable = jQuery(`#src-sp-table${tableIndex} tr`)
-                dataTable.each(function(index) {
+                dataTable.each(function (index) {
                     if (index > 1) {
                         let newColumnName;
                         let srcColumnName = jQuery(this).find('.src-column').html().trim();
@@ -426,7 +431,7 @@ const Actions = (() => {
             let generalModal = document.querySelector("hb-modal[modalId = createIndexModal]")
             const { SpSchema } = Store.getinstance().tableData.reportTabContent;
             let content = `<hb-add-index-form tableName=${tableName} 
-      tableIndex=${tableIndex} coldata=${JSON.stringify(SpSchema[tableName].ColNames)}  ></hb-add-index-form>`;
+      tableIndex=${tableIndex} coldata=${JSON.stringify(Store.getTables()[tableIndex].sp.ColNames)}></hb-add-index-form>`;
             generalModal.setAttribute("content", content);
             jQuery("#createIndexModal").modal();
             resetIndexModal();
@@ -465,9 +470,9 @@ const Actions = (() => {
             }
         },
 
-        SaveButtonHandler: async(tableNumber, tableName, notNullConstraint) => {
+        SaveButtonHandler: async (tableNumber, tableName, notNullConstraint) => {
             var errorMessage = [];
-            let schemaConversionObj = {...Store.getinstance().tableData.reportTabContent };
+            let schemaConversionObj = { ...Store.getinstance().tableData.reportTabContent };
             let fkStatus = false,
                 secIndexStatus = false,
                 columnStatus = false;
@@ -505,7 +510,7 @@ const Actions = (() => {
                 }
             }
             let flagofcheckbox = false;
-            jQuery(tableId).each(function(index) {
+            jQuery(tableId).each(function (index) {
                 if (!(jQuery(this).find("input[type=checkbox]").is(":checked"))) {
                     flagofcheckbox = true;
                     return false;
@@ -517,15 +522,15 @@ const Actions = (() => {
             return false;
         },
 
-        saveColumn: async(schemaConversionObj, tableNumber, tableName, notNullConstraint, tableData, errorMessage, updateInStore = false) => {
+        saveColumn: async (schemaConversionObj, tableNumber, tableName, notNullConstraint, tableData, errorMessage, updateInStore = false) => {
             let data;
             if (tableData.data.SpSchema != undefined) {
-                data = {...tableData.data };
+                data = { ...tableData.data };
             } else {
                 if (updateInStore) {
-                    data = {...Store.getinstance().tableData.reportTabContent };
+                    data = { ...Store.getinstance().tableData.reportTabContent };
                 } else {
-                    data = {...schemaConversionObj };
+                    data = { ...schemaConversionObj };
                 }
             }
 
@@ -544,7 +549,7 @@ const Actions = (() => {
                 'UpdateCols': {}
             }
             let newColArrayForDuplicateCheck = [];
-            jQuery(tableId).each(function(index) {
+            jQuery(tableId).each(function (index) {
                 if (index > 1) {
                     let newColumnName;
                     let srcColumnName = document.getElementById('src-column-name-' + tableNumber + tableColumnNumber + tableColumnNumber).innerHTML;
@@ -648,15 +653,15 @@ const Actions = (() => {
             return true;
         },
 
-        saveForeignKeys: async(schemaConversionObj, tableNumber, tableName, tableData, errorMessage) => {
+        saveForeignKeys: async (schemaConversionObj, tableNumber, tableName, tableData, errorMessage) => {
             let fkTableData, renameFkMap = {},
                 fkLength;
             let uniquevals;
             let newFkValueArray = [];
             let data;
             if (tableData.data.SpSchema != undefined) {
-                data = {...tableData.data };
-            } else data = {...schemaConversionObj };
+                data = { ...tableData.data };
+            } else data = { ...schemaConversionObj };
             if (data.SpSchema[tableName].Fks != null && data.SpSchema[tableName].Fks.length != 0) {
                 fkLength = data.SpSchema[tableName].Fks.length;
                 for (let x = 0; x < fkLength; x++) {
@@ -672,7 +677,7 @@ const Actions = (() => {
                     let keys = Object.keys(renameFkMap);
                     let flag = false;
                     let dummyobj = {};
-                    keys.forEach(function(key) {
+                    keys.forEach(function (key) {
 
                         for (let x = 0; x < fkLength; x++) {
                             if (data.SpSchema[tableName].Fks[x].Name === renameFkMap[key]) {
@@ -697,12 +702,12 @@ const Actions = (() => {
                     });
                     if (flag) {
                         let dummyrenameFkMap = {};
-                        keys.forEach(function(key) {
+                        keys.forEach(function (key) {
                             dummyobj[key] = new Date().toString() + key;
                         });
                         fkTableData = await Fetch.getAppData('POST', '/rename/fks?table=' + tableName, dummyobj);
                         if (fkTableData.ok) {
-                            keys.forEach(function(key) {
+                            keys.forEach(function (key) {
                                 dummyrenameFkMap[dummyobj[key]] = renameFkMap[key];
                             })
                         }
@@ -728,7 +733,7 @@ const Actions = (() => {
             return true;
         },
 
-        saveSecondaryIndexes: async(schemaConversionObj, tableNumber, tableName, tableData, errorMessage) => {
+        saveSecondaryIndexes: async (schemaConversionObj, tableNumber, tableName, tableData, errorMessage) => {
             let data;
             let newSecIndexArray = [];
             let uniquevals;
@@ -736,8 +741,8 @@ const Actions = (() => {
                 secIndexLength;
 
             if (tableData.data.SpSchema != undefined) {
-                data = {...tableData.data };
-            } else data = {...schemaConversionObj };
+                data = { ...tableData.data };
+            } else data = { ...schemaConversionObj };
 
             if (data.SpSchema[tableName].Indexes != null && data.SpSchema[tableName].Indexes.length != 0) {
                 secIndexLength = data.SpSchema[tableName].Indexes.length;
@@ -753,7 +758,7 @@ const Actions = (() => {
                     let duplicateFound = false;
                     let keys = Object.keys(renameIndexMap);
                     let flag = false;
-                    keys.forEach(function(key) {
+                    keys.forEach(function (key) {
                         for (let x = 0; x < secIndexLength; x++) {
                             if (data.SpSchema[tableName].Indexes[x].Name === renameIndexMap[key]) {
                                 if (uniquevals.length == newSecIndexArray.length) {
@@ -778,12 +783,12 @@ const Actions = (() => {
                     if (flag) {
                         let dummyobj = {};
                         let dummyrenameSecIndexMap = {};
-                        keys.forEach(function(key) {
+                        keys.forEach(function (key) {
                             dummyobj[key] = new Date().toString() + key;
                         });
                         secIndexTableData = await Fetch.getAppData('POST', '/rename/indexes?table=' + tableName, dummyobj);
                         if (secIndexTableData.ok) {
-                            keys.forEach(function(key) {
+                            keys.forEach(function (key) {
                                 dummyrenameSecIndexMap[dummyobj[key]] = renameIndexMap[key];
                             })
                         }
@@ -809,7 +814,7 @@ const Actions = (() => {
             return true;
         },
 
-        dropForeignKeyHandler: async(tableName, tableNumber, pos) => {
+        dropForeignKeyHandler: async (tableName, tableNumber, pos) => {
             let response;
             Actions.showSpinner();
             response = await Fetch.getAppData('GET', '/drop/fk?table=' + tableName + '&pos=' + pos);
@@ -826,16 +831,20 @@ const Actions = (() => {
             }
         },
 
-        dropSecondaryIndexHandler: async(tableName, tableNumber, pos) => {
+        dropSecondaryIndexHandler: async (tableName, tableNumber, pos) => {
             Actions.showSpinner()
             let response;
             response = await Fetch.getAppData('GET', '/drop/secondaryindex?table=' + tableName + '&pos=' + pos);
             if (response.ok) {
                 let responseCopy = response.clone();
                 let jsonObj = await responseCopy.json();
-                Store.updatePrimaryKeys(jsonObj);
-                Store.updateTableData("reportTabContent", jsonObj);
-                Actions.resetReportTableData();
+                // Store.updatePrimaryKeys(jsonObj);
+                // Store.updateTableData("reportTabContent", jsonObj);
+                Store.updateIndex(tableNumber, jsonObj.SpSchema[tableName].Indexes)
+                // Actions.resetReportTableData();
+                return true;
+            } else {
+                return false;
             }
         },
 
@@ -923,9 +932,11 @@ const Actions = (() => {
                 Actions.hideSpinner();
             }
             Store.setPageNumber(tableIndex, pageindex);
+        },
+
+        updateTable: (tableIndex, colName, attr, value) => {
+            Store.updateTables(tableIndex, colName, attr, value);
         }
-
-
     };
 })();
 

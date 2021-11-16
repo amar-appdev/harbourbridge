@@ -15,7 +15,7 @@ const Store = (function () {
       summary: new Array(1).fill(false),
     },
     tableMode: new Array(1).fill(false),
-    currentPageNumber : new Array(1).fill(0),
+    currentPageNumber: new Array(1).fill(0),
     searchInputValue: {
       ddlTab: "",
       reportTab: "",
@@ -29,6 +29,8 @@ const Store = (function () {
     tableBorderData: {},
     globalDataTypeList: {},
   };
+
+  var tables = [];
   let checkInterLeaveArray = {};
 
   return {
@@ -36,15 +38,19 @@ const Store = (function () {
       return instance;
     },
 
-    setPageYOffset:(value)=>{
+    getTables: function () {
+      return tables;
+    },
+
+    setPageYOffset: (value) => {
       pageYOffset = value;
     },
 
-    getPageYOffset:()=>{
+    getPageYOffset: () => {
       return pageYOffset;
     },
 
-    getTableChanges:()=>{
+    getTableChanges: () => {
       return tableChanges;
     },
 
@@ -78,12 +84,12 @@ const Store = (function () {
         report: new Array(val).fill(false),
         summary: new Array(val).fill(false),
       };
-      instance.currentPageNumber=new Array(val).fill(0),
-      instance.tableMode = new Array(val).fill(false);
+      instance.currentPageNumber = new Array(val).fill(0),
+        instance.tableMode = new Array(val).fill(false);
     },
 
     setInterleave: (tableName, value) => {
-     instance.checkInterleave[tableName] = value;
+      instance.checkInterleave[tableName] = value;
     },
 
     switchCurrentTab: (tab) => {
@@ -98,15 +104,15 @@ const Store = (function () {
       instance.openStatus[tableId][tableIndex] = false;
     },
 
-    incrementPageNumber:(tableIndex)=>{
+    incrementPageNumber: (tableIndex) => {
       instance.currentPageNumber[tableIndex]++;
     },
 
-    decrementPageNumber:(tableIndex)=>{
+    decrementPageNumber: (tableIndex) => {
       instance.currentPageNumber[tableIndex]--;
     },
 
-    getCurrentPageNumber:(tableIndex)=>{
+    getCurrentPageNumber: (tableIndex) => {
       return instance.currentPageNumber[tableIndex]
     },
 
@@ -131,33 +137,35 @@ const Store = (function () {
 
     updateTableData: (key, data) => {
       instance.tableData[key] = data;
+      if (key == 'reportTabContent') {
+        var dataCopy = JSON.parse(JSON.stringify(data));
+        let tableNames = Object.keys(dataCopy.SrcSchema);
+        tables = tableNames.map((name) => ({ 'src': dataCopy.SrcSchema[name], 'sp': dataCopy.SpSchema[name] }))
+      }
     },
 
     updateTableBorderData: (data) => {
       instance.tableBorderData = data;
     },
 
-    collapseAll:(value) => {
+    collapseAll: (value) => {
       let key = instance.currentTab.substr(0, instance.currentTab.length - 3);
       tableChanges = "collapse"
       instance.openStatus[key].fill(value);
     },
 
-    expandAll: (x,y) => {
-      let key = instance.currentTab.substr(0, instance.currentTab.length - 3);     
+    expandAll: (x, y) => {
+      let key = instance.currentTab.substr(0, instance.currentTab.length - 3);
       tableChanges = "expand";
       let openStatusarray = instance.openStatus[key];
-      for(let i =0; i<openStatusarray.length;i++)
-      {
+      for (let i = 0; i < openStatusarray.length; i++) {
         let bottomval = document.getElementById(i).getBoundingClientRect().bottom;
         let topval = document.getElementById(i).getBoundingClientRect().y;
-    
-        if(bottomval<-1000 || topval> window.innerHeight +1000)
-        {
+
+        if (bottomval < -1000 || topval > window.innerHeight + 1000) {
           openStatusarray[i] = false;
         }
-        else
-        {
+        else {
           openStatusarray[i] = true;
         }
       }
@@ -208,7 +216,7 @@ const Store = (function () {
           summary: new Array(1).fill(false),
         },
         tableMode: new Array(1).fill(false),
-        currentPageNumber : new Array(1).fill(0),
+        currentPageNumber: new Array(1).fill(0),
         searchInputValue: {
           ddlTab: "",
           reportTab: "",
@@ -242,6 +250,27 @@ const Store = (function () {
 
     setPageNumber: (tableIndex, pageNumber) => {
       instance.currentPageNumber[tableIndex] = pageNumber;
+    },
+
+    updateTables: (tableIndex, colName, attr, value) => {
+      if (attr == 'T') {
+        tables[tableIndex].sp.ColDefs[colName][attr].Name = value;
+        console.log(tables);
+        return;
+      }
+      else if (attr == 'Name') {
+        tables[tableIndex].sp.ColDefs[colName][attr] = value;
+        // var index = tables[tableIndex].sp.ColNames.indexOf(colName)
+        // tables[tableIndex].sp.ColNames[index] = value
+        return;
+      }
+      tables[tableIndex].sp.ColDefs[colName][attr] = value;
+      console.log(tables);
+    },
+
+    updateIndex: (tableIndex, indexArray) => {
+      tables[tableIndex].sp.Indexes = [...indexArray]
+      console.log(tables);
     }
   };
 })();

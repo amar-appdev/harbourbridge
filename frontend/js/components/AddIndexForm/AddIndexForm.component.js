@@ -11,6 +11,7 @@ class AddIndexForm extends HTMLElement {
   }
 
   get data() {
+    console.log(this.getAttribute("colData"));
     return JSON.parse(this.getAttribute("colData"));
   }
 
@@ -36,13 +37,20 @@ class AddIndexForm extends HTMLElement {
     if (document.getElementById("create-index-button")) {
       document
         .getElementById("create-index-button")
-        .addEventListener("click", () => {
-          Actions.fetchIndexFormValues(
+        .addEventListener("click", async () => {
+          let newIndexArray = await Actions.fetchIndexFormValues(
             this.tableIndex,
             this.tableName,
             document.getElementById("index-name").value,
             document.getElementById("unique-switch").checked
           );
+          if (newIndexArray) {
+            let currentTable = document.querySelector(`hb-data-table-test[tableName=${this.tableName}]`).data;
+            currentTable.sp.Indexes = [...newIndexArray];
+            document.querySelector(`hb-data-table-test[tableName=${this.tableName}]`).render();
+            console.log(newIndexArray);
+          }
+
         });
     }
 
@@ -67,8 +75,8 @@ class AddIndexForm extends HTMLElement {
         </div>
         <div id="newIndexColumnListDiv" class="column-list-container">
               ${this.data
-                .map((row, idx) => {
-                  return `
+        .map((row, idx) => {
+          return `
                 <div class="new-index-column-list" id="indexColumnRow${idx}">
                     <span class="order-id invisible-badge" id="order${row}${idx}">1</span>
                     <span class="column-name">${row}</span>
@@ -83,8 +91,8 @@ class AddIndexForm extends HTMLElement {
                         </div>
                     </span>
                 </div>`;
-                })
-                .join("")}  
+        })
+        .join("")}  
         </div>
         <div class="unique-swith-container">
             <span class="unique-swith-label">Unique</span>
