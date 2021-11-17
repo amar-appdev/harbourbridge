@@ -100,6 +100,7 @@ class DataTableTest extends HTMLElement {
     }
 
     secIndexComponent(tableIndex, tableName, secIndexArray, tableMode) {
+        console.log(secIndexArray);
         return `
             <div>
                 <div class="foreign-key-header" role="tab">
@@ -300,8 +301,7 @@ class DataTableTest extends HTMLElement {
                                             ${dataTypesarray[srcTable.ColDefs[currentColumnSrc].Type.Name]?.map((type) => {
                                 return `<option class="data-type-option" value="${type.T}" ${defaultdatatype == type.T ? "selected" : ""}>${type.T}</option>`;
                             }).join('')
-                        }
-                                            
+                        }                 
                                         </select>
                                     </div>
                                 </div>
@@ -480,7 +480,13 @@ class DataTableTest extends HTMLElement {
             })
         }
 
-        document.getElementById(`src-sp-table${tableIndex}`)?.style.removeProperty('width');
+        for (let i = 0; i < spTable.ColNames.length; i++) {
+            document.getElementById(`data-type-${tableIndex}${i}${i}`)?.addEventListener('change', (e) => {
+                if (e.target.value !== spTable.ColNames[i]) Actions.updateTable(tableIndex, spTable.ColNames[i], 'T', e.target.value);
+            })
+        }
+
+        document.getElementById(`src-sp-table${tableIndex} `)?.style.removeProperty('width');
         document.getElementById(`src-sp-table${tableIndex}_info`).style.display = "none"
         Actions.hideSpinner()
     }

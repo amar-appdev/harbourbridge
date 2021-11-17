@@ -262,12 +262,7 @@ const Store = (function () {
 
         case 'Name':
           console.log(colName);
-          console.log(tables[tableIndex].sp.ColDefs[colName]);
-          // tables[tableIndex].sp.ColDefs[value] = JSON.parse(JSON.stringify(tables[tableIndex].sp.ColDefs[colName]));
           tables[tableIndex].sp.ColDefs[colName]['Name'] = value;
-          // var index = tables[tableIndex].sp.ColNames.indexOf(colName)
-          // tables[tableIndex].sp.ColNames[index] = value
-          // delete tables[tableIndex].sp.ColDefs[colName];
           console.log(tables[tableIndex]);
           break;
 
