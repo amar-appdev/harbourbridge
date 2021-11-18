@@ -41,10 +41,7 @@ class SiteButton extends HTMLElement {
           break;
 
         case "createNewSecIndex":
-
           Actions[this.buttonAction](this.buttonId);
-          // let currentTable = document.querySelector(`hb-data-table-test[tableName=${tableName}]`).data;
-          // console.log('it wokred...');
           break;
 
         case "add":

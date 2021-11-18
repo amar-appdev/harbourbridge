@@ -136,12 +136,13 @@ const Store = (function () {
     },
 
     updateTableData: (key, data) => {
-      instance.tableData[key] = data;
       if (key == 'reportTabContent') {
         var dataCopy = JSON.parse(JSON.stringify(data));
         let tableNames = Object.keys(dataCopy.SrcSchema);
         tables = tableNames.map((name) => ({ 'src': dataCopy.SrcSchema[name], 'sp': dataCopy.SpSchema[name] }))
+        console.log('global update', tables);
       }
+      instance.tableData[key] = data;
     },
 
     updateTableBorderData: (data) => {

@@ -19,7 +19,7 @@ class DataTable extends HTMLElement {
 
     set data(value) {
         this._dta = value;
-        if (this._dta.SpSchema.Fks) {
+        if (this._dta.sp.Fks) {
             this.checkInterLeave = Actions.getInterleaveConversionForATable(this.tableName);
             if (this.checkInterLeave === undefined) {
                 Actions.checkInterleaveConversion(this.tableName);
@@ -29,7 +29,7 @@ class DataTable extends HTMLElement {
         this.render();
     }
 
-    connectedCallback() {}
+    connectedCallback() { }
 
     fkComponent(tableIndex, tableName, fkArray, tableMode) {
         return `
@@ -113,7 +113,7 @@ class DataTable extends HTMLElement {
                             <hb-site-button buttonid="hb-${tableIndex}indexButton-${this.tableName}" classname="new-index-button"
                                 buttonaction="createNewSecIndex" text="Add Index"></hb-site-button>
                             <table class="index-acc-table fk-table">
-                                ${ secIndexArray && secIndexArray.length > 0 ? `<thead>
+                                ${secIndexArray && secIndexArray.length > 0 ? `<thead>
                                     <tr>
                                         <th>Name</th>
                                         <th>Table</th>
@@ -161,9 +161,9 @@ class DataTable extends HTMLElement {
     render() {
         let { tableName, tableIndex, data } = this;
         let countSrc = [], countSp = [], notNullConstraint = [];
-        let spTable = data.SpSchema;
-        let srcTable = data.SrcSchema;
-        let tableColumnsArray = data.SpSchema.ColNames;
+        let spTable = data.sp;
+        let srcTable = data.src;
+        let tableColumnsArray = spTable.ColNames;
         let tableColumnsArrayLength = tableColumnsArray.length;
         let pksSp = [...spTable.Pks];
         let pksSpLength = pksSp.length;
@@ -179,14 +179,14 @@ class DataTable extends HTMLElement {
         let sourceDbName = Actions.getSourceDbName();
         let tableMode = Actions.getTableMode(tableIndex);
         let dataTypesarray = Actions.getGlobalDataTypeList();
-        let pageNumber = data.currentPageNumber;
+        // let pageNumber = data.currentPageNumber;
+        let pageNumber = 0;
         let columnPerPage = 15;
-        let maxPossiblePageNumber =  Math.ceil(tableColumnsArrayLength / columnPerPage);
+        let maxPossiblePageNumber = Math.ceil(tableColumnsArrayLength / columnPerPage);
         let tableColumnsArrayCurrent = [];
         let z = 0;
-        for(let i= pageNumber*columnPerPage ;i < Math.min(tableColumnsArrayLength, pageNumber*columnPerPage+15) ; i++ )
-        {
-            tableColumnsArrayCurrent[z]=tableColumnsArray[i];
+        for (let i = pageNumber * columnPerPage; i < Math.min(tableColumnsArrayLength, pageNumber * columnPerPage + 15); i++) {
+            tableColumnsArrayCurrent[z] = tableColumnsArray[i];
             z++;
         }
 
@@ -226,8 +226,8 @@ class DataTable extends HTMLElement {
                     <tbody class="acc-table-body">
                         
                         ${
-                            // filter((_, idx) => idx >= pageNumber * columnPerPage && idx < pageNumber * columnPerPage + columnPerPage)          
-                tableColumnsArrayCurrent.map((tableColumn, index) => {
+            // filter((_, idx) => idx >= pageNumber * columnPerPage && idx < pageNumber * columnPerPage + columnPerPage)          
+            tableColumnsArrayCurrent.map((tableColumn, index) => {
                 let pkFlag = false, seqId;
                 countSrc[tableIndex][index] = 0;
                 countSp[tableIndex][index] = 0;
@@ -236,7 +236,7 @@ class DataTable extends HTMLElement {
                         pkFlag = true; seqId = pksSp[x].seqId;
                         break
                     }
-                } let currentColumnSrc = data.ToSource.Cols[tableColumn];
+                } let currentColumnSrc = srcTable.ColNames[index];
                 let defaultdatatype = spTable.ColDefs[tableColumn].T.Name;
                 return `
                             <tr class="report-table-content">
@@ -272,7 +272,7 @@ class DataTable extends HTMLElement {
                                     <span class="column right form-group">
                                         <input type="text" class="spanner-input form-control"
                                             id="column-name-text-${tableIndex}${index}${index}" autocomplete="off"
-                                            value=${tableColumn} />
+                                            value="${spTable.ColDefs[tableColumn].Name}" />
                                     </span>
                                 </div>`
                         : `
@@ -284,7 +284,7 @@ class DataTable extends HTMLElement {
                             `<sub></sub>
                                         <img src="./Icons/Icons/ic_vpn_key_24px.svg" class="primary-key hidden" />`}
                                     </span>
-                                    <span class="column right spanner-col-name-span pointer">${tableColumn}</span>
+                                    <span class="column right spanner-col-name-span pointer">${spTable.ColDefs[tableColumn].Name}</span>
                                 </div>`}
                             </td>
                             <td class="acc-table-td" id="src-data-type-${tableIndex}${index}">
@@ -296,10 +296,9 @@ class DataTable extends HTMLElement {
                                     <div class="form-group">
                                         <select class="form-control spanner-input report-table-select"
                                             id="data-type-${tableIndex}${index}${index}">
-                                            ${
-                        dataTypesarray[srcTable.ColDefs[currentColumnSrc].Type.Name]?.map((type) => {
-                            return `<option class="data-type-option" value="${type.T}" ${defaultdatatype == type.T ? "selected" : ""}>${type.T}</option>`;
-                        }).join('')
+                                            ${dataTypesarray[srcTable.ColDefs[currentColumnSrc].Type.Name]?.map((type) => {
+                                return `<option class="data-type-option" value="${type.T}" ${defaultdatatype == type.T ? "selected" : ""}>${type.T}</option>`;
+                            }).join('')
                         }
                                             
                                         </select>
@@ -325,8 +324,7 @@ class DataTable extends HTMLElement {
                                 </select>
                             </td>
                             <td class="acc-table-td sp-column acc-table-td spanner-tab-cell-${tableIndex}${index}">
-                                <div>
-                                    <select multiple size="1" class="form-control spanner-input report-table-select"
+                                <select multiple size="1" class="form-control spanner-input report-table-select"
                                         id="sp-constraint-${tableIndex}${index}">
                                         ${spTable.ColDefs[tableColumn].NotNull ?
                         (countSp[tableIndex][index] = countSp[tableIndex][index] + 1,
@@ -341,8 +339,8 @@ class DataTable extends HTMLElement {
                                         </option>`)}
                                     </select>
                                 </div>
-                            </td>
-                            </tr>`;
+                            </td >
+                            </tr > `;
             }).join("")}
                     </tbody>
                 </table>
@@ -350,8 +348,8 @@ class DataTable extends HTMLElement {
                     <span class="pagination-text">Showing ${pageNumber * columnPerPage + 1} to ${Math.min(pageNumber * columnPerPage + columnPerPage, tableColumnsArrayLength)} of ${tableColumnsArrayLength} entries </span>
                     <div>
                         <button  class="pagination-button" id="pre-btn${tableIndex}" ${pageNumber <= 0 ? `disabled` : ``}>&#8592; Pre </button>
-                        <input class="pagination-input" type="number" min="1" max="${ maxPossiblePageNumber}" value="${parseInt(pageNumber)+1}" id="pagination-input-id-${tableIndex}" />
-                        <span  class="pagination-number">/${ maxPossiblePageNumber}</span>
+                        <input class="pagination-input" type="number" min="1" max="${maxPossiblePageNumber}" value="${parseInt(pageNumber) + 1}" id="pagination-input-id-${tableIndex}" />
+                        <span  class="pagination-number">/${maxPossiblePageNumber}</span>
                         <button  class="pagination-button" id="next-btn${tableIndex}" ${(pageNumber + 1) * columnPerPage >= tableColumnsArrayLength ? `disabled` : ``}> Next &#8594; </button>
                     </div>
                 </div>
@@ -385,30 +383,30 @@ class DataTable extends HTMLElement {
             });
         });
         document.getElementById("editSpanner" + tableIndex)?.addEventListener("click", async (event) => {
-                if(event.target.innerHTML.trim()=="Edit Spanner Schema") {
-                    Actions.showSpinner();
-                    Actions.setTableMode(tableIndex,true);
-                }
-                else {
-                    Actions.showSpinner();
-                   await Actions.SaveButtonHandler(tableIndex, tableName, notNullConstraint);
-                }
+            if (event.target.innerHTML.trim() == "Edit Spanner Schema") {
+                Actions.showSpinner();
+                Actions.setTableMode(tableIndex, true);
+            }
+            else {
+                Actions.showSpinner();
+                await Actions.SaveButtonHandler(tableIndex, tableName, notNullConstraint);
+            }
         });
-        document.getElementById("pagination-input-id-"+tableIndex).addEventListener("keypress",(e)=>{
-            if(e.key === "Enter" && e.target.value != pageNumber+1){
-                if(e.target.value>0 && e.target.value<=  maxPossiblePageNumber ) {
+        document.getElementById("pagination-input-id-" + tableIndex).addEventListener("keypress", (e) => {
+            if (e.key === "Enter" && e.target.value != pageNumber + 1) {
+                if (e.target.value > 0 && e.target.value <= maxPossiblePageNumber) {
                     Actions.showSpinner();
-                    Actions.changePage(tableIndex,parseInt(e.target.value)-1);
+                    Actions.changePage(tableIndex, parseInt(e.target.value) - 1);
                 }
-                else if(e.target.value > maxPossiblePageNumber ){
-                    document.getElementById("pagination-input-id-"+tableIndex).value = maxPossiblePageNumber;
+                else if (e.target.value > maxPossiblePageNumber) {
+                    document.getElementById("pagination-input-id-" + tableIndex).value = maxPossiblePageNumber;
                     Actions.showSpinner();
-                    Actions.changePage(tableIndex,parseInt(maxPossiblePageNumber)-1);
+                    Actions.changePage(tableIndex, parseInt(maxPossiblePageNumber) - 1);
                 }
-                else if(e.target.value < 1){
-                    document.getElementById("pagination-input-id-"+tableIndex).value = 1;
+                else if (e.target.value < 1) {
+                    document.getElementById("pagination-input-id-" + tableIndex).value = 1;
                     Actions.showSpinner();
-                    Actions.changePage(tableIndex,0);
+                    Actions.changePage(tableIndex, 0);
                 }
             }
         })
@@ -433,8 +431,12 @@ class DataTable extends HTMLElement {
                     jQuery('#index-and-key-delete-warning').find('#modal-content').html(`This will permanently delete the secondary index
                     and the corresponding uniqueness constraints on indexed columns (if applicable). Do you want to continue?`);
                     recreateNode(document.getElementById('fk-drop-confirm'))
-                    document.getElementById('fk-drop-confirm').addEventListener('click', () => {
-                        Actions.dropSecondaryIndexHandler(tableName, tableIndex, index);
+                    document.getElementById('fk-drop-confirm').addEventListener('click', async () => {
+                        if (await Actions.dropSecondaryIndexHandler(tableName, tableIndex, index)) {
+                            this.data = JSON.parse(JSON.stringify(Actions.getTables(tableIndex)));
+                            this.render();
+                        }
+                        Actions.hideSpinner();
                     })
                 })
             });
@@ -461,8 +463,18 @@ class DataTable extends HTMLElement {
         })
 
         if (tableMode) {
-            checkBoxStateHandler(tableIndex, Object.keys(data.ToSpanner.Cols).length);
+            checkBoxStateHandler(tableIndex, Object.keys(spTable.ColNames).length);
             editButtonHandler(tableIndex, notNullConstraint);
+        }
+        console.log('event lister ', spTable.ColNames);
+        for (let i = 0; i < spTable.ColNames.length; i++) {
+            document.getElementById(`column-name-text-${tableIndex}${i}${i}`)?.addEventListener('focusout', (e) => {
+                if (e.target.value !== spTable.ColNames[i]) Actions.updateTable(tableIndex, spTable.ColNames[i], 'Name', e.target.value);
+            })
+
+            document.getElementById(`data-type-${tableIndex}${i}${i}`)?.addEventListener('change', (e) => {
+                if (e.target.value !== spTable.ColNames[i]) Actions.updateTable(tableIndex, spTable.ColNames[i], 'T', e.target.value);
+            })
         }
         document.getElementById(`src-sp-table${tableIndex}`)?.style.removeProperty('width');
         document.getElementById(`src-sp-table${tableIndex}_info`).style.display = "none"

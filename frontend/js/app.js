@@ -1,6 +1,5 @@
 import "./pages/MainScreen/MainScreen.page.js";
 import "./pages/SchemaConversionScreen/SchemaConversionScreen.page.js";
-import "./pages/SchemaTest/SchemaTest.page.js"
 import "./pages/Instructions/Instructions.page.js";
 import "./pages/DefaultLayout/DefaultLayout.page.js";
 import { setActiveSelectedMenu } from './helpers/SchemaConversionHelper.js'
@@ -33,15 +32,6 @@ const InstructionsComponent = {
   },
 };
 
-// Instructions Component
-const SchemaTestComponent = {
-  render: () => {
-    document.getElementById(
-      "app"
-    ).innerHTML = `<hb-default-layout><hb-schema-test></hb-schema-test></<hb-default-layout>`;
-  },
-};
-
 // Error component (for any unrecognized path)
 const ErrorComponent = {
   render: () => {
@@ -58,7 +48,6 @@ const paths = {
   defaultPath: "/",
   schemaReport: "/schema-report",
   instructions: "/instructions",
-  schematest: "/schematest"
 };
 
 // Pre defined routes
@@ -66,7 +55,6 @@ const routes = [
   { path: paths.defaultPath, component: HomeComponent },
   { path: paths.schemaReport, component: SchemaComponent },
   { path: paths.instructions, component: InstructionsComponent },
-  { path: paths.schematest, component: SchemaTestComponent },
 ];
 
 // function to fetch browser url

@@ -17,12 +17,6 @@ export const NAVLINKS = {
         aTagId: "schemaScreen",
         name: "headerMenu",
     },
-    {
-        text: "Schema Test",
-        href: "#/schematest",
-        aTagId: "schemaTest",
-        name: "headerMenu",
-    },
 
     {
         text: "Instructions",

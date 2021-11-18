@@ -349,8 +349,10 @@ const Actions = (() => {
             }
             let newIndex = {};
             let newIndexPos = 1;
-            let jsonObj = Store.getinstance().tableData.reportTabContent;
-            let table = jsonObj.SpSchema[tableName];
+            // let jsonObj = Store.getinstance().tableData.reportTabContent;
+            // let table = jsonObj.SpSchema[tableName];
+            let jsonObj = Store.getTables()
+            let table = jsonObj[tableIndex].sp;
             newIndex["Name"] = name;
             newIndex["Table"] = table.Name;
             if (uniqueness) {
@@ -430,11 +432,13 @@ const Actions = (() => {
             }
             let generalModal = document.querySelector("hb-modal[modalId = createIndexModal]")
             const { SpSchema } = Store.getinstance().tableData.reportTabContent;
+            resetIndexModal();
+            let content2 = `empty`;
+            generalModal.setAttribute("content", content2);
             let content = `<hb-add-index-form tableName=${tableName} 
       tableIndex=${tableIndex} coldata=${JSON.stringify(Store.getTables()[tableIndex].sp.ColNames)}></hb-add-index-form>`;
             generalModal.setAttribute("content", content);
             jQuery("#createIndexModal").modal();
-            resetIndexModal();
         },
 
         closeSecIndexModal: () => {

@@ -11,7 +11,6 @@ class AddIndexForm extends HTMLElement {
   }
 
   get data() {
-    console.log(this.getAttribute("colData"));
     return JSON.parse(this.getAttribute("colData"));
   }
 
@@ -45,10 +44,9 @@ class AddIndexForm extends HTMLElement {
             document.getElementById("unique-switch").checked
           );
           if (newIndexArray) {
-            let currentTable = document.querySelector(`hb-data-table-test[tableName=${this.tableName}]`).data;
+            let currentTable = document.querySelector(`hb-data-table[tableName=${this.tableName}]`).data;
             currentTable.sp.Indexes = [...newIndexArray];
-            document.querySelector(`hb-data-table-test[tableName=${this.tableName}]`).render();
-            console.log(newIndexArray);
+            document.querySelector(`hb-data-table[tableName=${this.tableName}]`).render();
           }
 
         });
