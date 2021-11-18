@@ -179,8 +179,8 @@ class DataTable extends HTMLElement {
         let sourceDbName = Actions.getSourceDbName();
         let tableMode = Actions.getTableMode(tableIndex);
         let dataTypesarray = Actions.getGlobalDataTypeList();
-        // let pageNumber = data.currentPageNumber;
-        let pageNumber = 0;
+        let pageNumber = Actions.getCurrentPageNumber(tableIndex);
+        // let pageNumber = 0;
         let columnPerPage = 15;
         let maxPossiblePageNumber = Math.ceil(tableColumnsArrayLength / columnPerPage);
         let tableColumnsArrayCurrent = [];
@@ -190,6 +190,7 @@ class DataTable extends HTMLElement {
             z++;
         }
 
+        console.log(tableColumnsArrayCurrent);
         this.innerHTML =
             ` <div class="acc-card-content" id="acc-card-content">
                 <table class="acc-table" id="src-sp-table${tableIndex}">
@@ -236,7 +237,7 @@ class DataTable extends HTMLElement {
                         pkFlag = true; seqId = pksSp[x].seqId;
                         break
                     }
-                } let currentColumnSrc = srcTable.ColNames[index];
+                } let currentColumnSrc = srcTable.ColNames[pageNumber * columnPerPage + index];
                 let defaultdatatype = spTable.ColDefs[tableColumn].T.Name;
                 return `
                             <tr class="report-table-content">
@@ -469,11 +470,11 @@ class DataTable extends HTMLElement {
         console.log('event lister ', spTable.ColNames);
         for (let i = 0; i < spTable.ColNames.length; i++) {
             document.getElementById(`column-name-text-${tableIndex}${i}${i}`)?.addEventListener('focusout', (e) => {
-                if (e.target.value !== spTable.ColNames[i]) Actions.updateTable(tableIndex, spTable.ColNames[i], 'Name', e.target.value);
+                if (e.target.value !== spTable.ColNames[i]) Actions.updateTable(tableIndex, spTable.ColNames[pageNumber * columnPerPage + i], 'Name', e.target.value);
             })
 
             document.getElementById(`data-type-${tableIndex}${i}${i}`)?.addEventListener('change', (e) => {
-                if (e.target.value !== spTable.ColNames[i]) Actions.updateTable(tableIndex, spTable.ColNames[i], 'T', e.target.value);
+                if (e.target.value !== spTable.ColNames[i]) Actions.updateTable(tableIndex, spTable.ColNames[pageNumber * columnPerPage + i], 'T', e.target.value);
             })
         }
         document.getElementById(`src-sp-table${tableIndex}`)?.style.removeProperty('width');
