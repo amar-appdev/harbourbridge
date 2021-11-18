@@ -825,13 +825,21 @@ const Actions = (() => {
             if (response.ok) {
                 let responseCopy = response.clone();
                 let jsonResponse = await responseCopy.json();
-                Store.updatePrimaryKeys(jsonResponse);
-                Store.updateTableData("reportTabContent", jsonResponse);
+                // Store.updatePrimaryKeys(jsonResponse);
+                // Store.updateTableData("reportTabContent", jsonResponse);
+                Store.updateForeignKey(tableNumber, jsonResponse.SpSchema[tableName].Fks)
+
                 Actions.resetReportTableData();
 
                 if (jsonResponse.SpSchema[tableName].Fks === null && jsonResponse.SpSchema[tableName].Fks.length === 0) {
                     jQuery('#' + tableNumber).find('.fk-card').addClass('template');
                 }
+                Actions.hideSpinner()
+                return true;
+            }
+            else {
+                Actions.hideSpinner()
+                return false;
             }
         },
 

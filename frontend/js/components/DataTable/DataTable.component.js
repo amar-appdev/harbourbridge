@@ -160,7 +160,7 @@ class DataTable extends HTMLElement {
 
     render() {
         let { tableName, tableIndex, data } = this;
-        let countSrc = [], countSp = [], notNullConstraint = [];
+        let notNullConstraint = [];
         let spTable = data.sp;
         let srcTable = data.src;
         let tableColumnsArray = spTable.ColNames;
@@ -168,8 +168,6 @@ class DataTable extends HTMLElement {
         let pksSp = [...spTable.Pks];
         let pksSpLength = pksSp.length;
         let pkSeqId = 1;
-        countSrc[tableIndex] = [];
-        countSp[tableIndex] = [];
         for (var x = 0; x < pksSpLength; x++) {
             if (pksSp[x].seqId == undefined) {
                 pksSp[x].seqId = pkSeqId;
@@ -230,8 +228,6 @@ class DataTable extends HTMLElement {
             // filter((_, idx) => idx >= pageNumber * columnPerPage && idx < pageNumber * columnPerPage + columnPerPage)          
             tableColumnsArrayCurrent.map((tableColumn, index) => {
                 let pkFlag = false, seqId;
-                countSrc[tableIndex][index] = 0;
-                countSp[tableIndex][index] = 0;
                 for (var x = 0; x < pksSpLength; x++) {
                     if (pksSp[x].Col === tableColumn) {
                         pkFlag = true; seqId = pksSp[x].seqId;
@@ -300,8 +296,7 @@ class DataTable extends HTMLElement {
                                             ${dataTypesarray[srcTable.ColDefs[currentColumnSrc].Type.Name]?.map((type) => {
                                 return `<option class="data-type-option" value="${type.T}" ${defaultdatatype == type.T ? "selected" : ""}>${type.T}</option>`;
                             }).join('')
-                        }
-                                            
+                        }       
                                         </select>
                                     </div>
                                 </div>
@@ -313,76 +308,71 @@ class DataTable extends HTMLElement {
                             <td class="acc-table-td">
                                 <select multiple size="1" class="form-control spanner-input report-table-select srcConstraint"
                                     id="srcConstraint${tableIndex}${index}">
-                                    ${srcTable.ColDefs[currentColumnSrc].NotNull ?
-                        (countSrc[tableIndex][index] = countSrc[tableIndex][index] + 1,
-                            `<option disabled class="srcNotNullConstraint active">
+                                    <option disabled class="srcNotNullConstraint ${srcTable.ColDefs[currentColumnSrc].NotNull ? "active" : ""}">
                                         Not Null
-                                    </option>`)
-                        :
-                        `<option disabled class="srcNotNullConstraint">
-                                        Not Null
-                                    </option>`}
+                                    </option>
                                 </select>
                             </td>
                             <td class="acc-table-td sp-column acc-table-td spanner-tab-cell-${tableIndex}${index}">
                                 <select multiple size="1" class="form-control spanner-input report-table-select"
                                         id="sp-constraint-${tableIndex}${index}">
-                                        ${spTable.ColDefs[tableColumn].NotNull ?
-                        (countSp[tableIndex][index] = countSp[tableIndex][index] + 1,
-                            notNullConstraint[parseInt(String(tableIndex) + String(index))] = 'Not Null',
-                            `<option ${tableMode ? "" : "disabled"} class="active">
-                                            Not Null
-                                        </option>`)
-                        :
-                        (notNullConstraint[parseInt(String(tableIndex) + String(index))] = '',
-                            `<option ${tableMode ? "" : "disabled"}>
-                                            Not Null
-                                        </option>`)}
-                                    </select>
-                                </div>
+                                    <option ${tableMode ? "" : "disabled"} 
+                                         class= ${spTable.ColDefs[tableColumn].NotNull ? "active" : ""} >
+                                        Not Null
+                                        </> 
+                                </select>
+                                </div >
                             </td >
                             </tr > `;
-            }).join("")}
-                    </tbody>
-                </table>
-                <div class="pagination-container">
-                    <span class="pagination-text">Showing ${pageNumber * columnPerPage + 1} to ${Math.min(pageNumber * columnPerPage + columnPerPage, tableColumnsArrayLength)} of ${tableColumnsArrayLength} entries </span>
-                    <div>
-                        <button  class="pagination-button" id="pre-btn${tableIndex}" ${pageNumber <= 0 ? `disabled` : ``}>&#8592; Pre </button>
-                        <input class="pagination-input" type="number" min="1" max="${maxPossiblePageNumber}" value="${parseInt(pageNumber) + 1}" id="pagination-input-id-${tableIndex}" />
-                        <span  class="pagination-number">/${maxPossiblePageNumber}</span>
-                        <button  class="pagination-button" id="next-btn${tableIndex}" ${(pageNumber + 1) * columnPerPage >= tableColumnsArrayLength ? `disabled` : ``}> Next &#8594; </button>
-                    </div>
-                </div>
+            }).join("")
+            }
+                    </tbody >
+                </table >
+    <div class="pagination-container">
+        <span class="pagination-text">Showing ${pageNumber * columnPerPage + 1} to ${Math.min(pageNumber * columnPerPage + columnPerPage, tableColumnsArrayLength)} of ${tableColumnsArrayLength} entries </span>
+        <div>
+            <button class="pagination-button" id="pre-btn${tableIndex}" ${pageNumber <= 0 ? `disabled` : ``}>&#8592; Pre </button>
+            <input class="pagination-input" type="number" min="1" max="${maxPossiblePageNumber}" value="${parseInt(pageNumber) + 1}" id="pagination-input-id-${tableIndex}" />
+            <span class="pagination-number">/${maxPossiblePageNumber}</span>
+            <button class="pagination-button" id="next-btn${tableIndex}" ${(pageNumber + 1) * columnPerPage >= tableColumnsArrayLength ? `disabled` : ``}> Next &#8594; </button>
+        </div>
+    </div>
             ${spTable.Fks?.length > 0 ? this.fkComponent(tableIndex, tableName, spTable.Fks, tableMode) : `<div></div>`}
             ${this.secIndexComponent(tableIndex, tableName, spTable.Indexes, tableMode)}
-            <div class="summary-card">
-                <div class="summary-card-header" role="tab">
-                    <h5 class="mb-0">
-                        <a data-toggle="collapse" class="summary-font" href="#view-summary-${tableIndex}">View Summary</a>
-                    </h5>
-                </div>
-                <div class="collapse inner-summary-collapse" id="view-summary-${tableIndex}">
-                    <div class="mdc-card mdc-card-content summary-border">
-                        <hb-list-table tabName="summary" tableName="${tableName}" dta="${data.summary}"></hb-list-table>
-                    </div>
-                </div>
-            </div>
-        </div>`;
+<div class="summary-card">
+    <div class="summary-card-header" role="tab">
+        <h5 class="mb-0">
+            <a data-toggle="collapse" class="summary-font" href="#view-summary-${tableIndex}">View Summary</a>
+        </h5>
+    </div>
+    <div class="collapse inner-summary-collapse" id="view-summary-${tableIndex}">
+        <div class="mdc-card mdc-card-content summary-border">
+            <hb-list-table tabName="summary" tableName="${tableName}" dta="${data.summary}"></hb-list-table>
+        </div>
+    </div>
+</div>
+        </div > `;
 
         jQuery("#src-sp-table" + tableIndex).DataTable({ "paging": false, "bSort": false });
+
         tableColumnsArrayCurrent.map((columnName, index) => {
+            let initialSpannerCons = spTable.ColDefs[columnName].NotNull ? 1 : 0;
+            notNullConstraint[index] = spTable.ColDefs[columnName].NotNull ? 'Not Null' : ''
+            let srcColName = srcTable.ColNames[pageNumber * columnPerPage + index];
+            let initialSrcCons = srcTable.ColDefs[srcColName].NotNull ? 1 : 0;
             new vanillaSelectBox('#srcConstraint' + tableIndex + index, {
-                placeHolder: countSrc[tableIndex][index] + " constraints selected",
+                placeHolder: initialSrcCons + " constraints selected",
                 maxWidth: 500,
-                maxHeight: 300
+                maxHeight: 300,
             });
             new vanillaSelectBox('#sp-constraint-' + tableIndex + index, {
-                placeHolder: countSp[tableIndex][index] + " constraints selected",
+                placeHolder: initialSpannerCons + " constraints selected",
                 maxWidth: 500,
                 maxHeight: 300
             });
         });
+
+
         document.getElementById("editSpanner" + tableIndex)?.addEventListener("click", async (event) => {
             if (event.target.innerHTML.trim() == "Edit Spanner Schema") {
                 Actions.showSpinner();
@@ -417,10 +407,13 @@ class DataTable extends HTMLElement {
                 document.getElementById(tableName + index + 'foreignKey').addEventListener('click', () => {
                     jQuery('#index-and-key-delete-warning').modal();
                     jQuery('#index-and-key-delete-warning').find('#modal-content').html(`This will permanently delete the foreign key
-                    constraint and the corresponding uniqueness constraints on referenced columns. Do you want to continue?`);
+                    constraint and the corresponding uniqueness constraints on referenced columns.Do you want to continue?`);
                     recreateNode(document.getElementById('fk-drop-confirm'));
-                    document.getElementById('fk-drop-confirm').addEventListener('click', () => {
-                        Actions.dropForeignKeyHandler(tableName, tableIndex, index);
+                    document.getElementById('fk-drop-confirm').addEventListener('click', async () => {
+                        if (await Actions.dropForeignKeyHandler(tableName, tableIndex, index)) {
+                            this.data = JSON.parse(JSON.stringify(Actions.getTables(tableIndex)));
+                            this.render();
+                        }
                     })
                 })
             });
@@ -430,7 +423,7 @@ class DataTable extends HTMLElement {
                 document.getElementById(tableName + index + 'secIndex').addEventListener('click', () => {
                     jQuery('#index-and-key-delete-warning').modal();
                     jQuery('#index-and-key-delete-warning').find('#modal-content').html(`This will permanently delete the secondary index
-                    and the corresponding uniqueness constraints on indexed columns (if applicable). Do you want to continue?`);
+                    and the corresponding uniqueness constraints on indexed columns(if applicable).Do you want to continue?`);
                     recreateNode(document.getElementById('fk-drop-confirm'))
                     document.getElementById('fk-drop-confirm').addEventListener('click', async () => {
                         if (await Actions.dropSecondaryIndexHandler(tableName, tableIndex, index)) {
@@ -468,14 +461,30 @@ class DataTable extends HTMLElement {
             editButtonHandler(tableIndex, notNullConstraint);
         }
         console.log('event lister ', spTable.ColNames);
+
         for (let i = 0; i < spTable.ColNames.length; i++) {
+            let currentIndex = pageNumber * columnPerPage + i;
             document.getElementById(`column-name-text-${tableIndex}${i}${i}`)?.addEventListener('focusout', (e) => {
-                if (e.target.value !== spTable.ColNames[i]) Actions.updateTable(tableIndex, spTable.ColNames[pageNumber * columnPerPage + i], 'Name', e.target.value);
+                if (e.target.value !== spTable.ColNames[i]) Actions.updateTable(tableIndex, spTable.ColNames[currentIndex], 'Name', e.target.value);
             })
 
             document.getElementById(`data-type-${tableIndex}${i}${i}`)?.addEventListener('change', (e) => {
-                if (e.target.value !== spTable.ColNames[i]) Actions.updateTable(tableIndex, spTable.ColNames[pageNumber * columnPerPage + i], 'T', e.target.value);
+                if (e.target.value !== spTable.ColNames[i]) Actions.updateTable(tableIndex, spTable.ColNames[currentIndex], 'T', e.target.value);
             })
+
+            let currentSelectId = "#sp-constraint-" + tableIndex + currentIndex;
+            document.querySelector(currentSelectId)?.addEventListener("change", function (e) {
+                let collection = document.querySelectorAll(currentSelectId + " option");
+                collection.forEach(function (x) {
+                    if (x.selected) {
+                        Actions.updateTable(tableIndex, spTable.ColNames[currentIndex], 'NotNull', true);
+                        notNullConstraint[i] = 'Not Null'
+                    } else {
+                        Actions.updateTable(tableIndex, spTable.ColNames[currentIndex], 'NotNull', false);
+                        notNullConstraint[i] = '';
+                    }
+                });
+            });
         }
         document.getElementById(`src-sp-table${tableIndex}`)?.style.removeProperty('width');
         document.getElementById(`src-sp-table${tableIndex}_info`).style.display = "none"

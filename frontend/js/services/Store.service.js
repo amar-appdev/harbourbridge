@@ -280,6 +280,10 @@ const Store = (function () {
     updateIndex: (tableIndex, indexArray) => {
       tables[tableIndex].sp.Indexes = [...indexArray]
       console.log(tables);
+    },
+
+    updateForeignKey: (tableIndex, indexArray) => {
+      tables[tableIndex].sp.Fks = [...indexArray];
     }
   };
 })();
