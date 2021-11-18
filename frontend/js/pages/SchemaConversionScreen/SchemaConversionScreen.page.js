@@ -190,7 +190,7 @@ class SchemaConversionScreen extends HTMLElement {
     initSchemaScreenTasks();
     if (currentTab === "reportTab" && !this.testing) {
       this.tables = Store.getTables()
-      this.sendDatatoReportTab(this.tables);
+      this.sendDatatoReportTab(this.tables.filter(table => table.sp.Name.indexOf(searchInputValue[currentTab]) > -1));
       // this.sendDatatoReportTab(tableNameArray
       //   .filter((title) => title.indexOf(searchInputValue[currentTab]) > -1), currentTabContent);
       if (!this.testing) {
